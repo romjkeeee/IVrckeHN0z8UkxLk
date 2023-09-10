@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Best Book Landing Page</title>
+  <link rel="stylesheet" href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css" />
+  <link href="https://unpkg.com/@tailwindcss/custom-forms/dist/custom-forms.min.css" rel="stylesheet" />
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap");
+
+    html {
+      font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    }
+  </style>
+</head>
+<body class="leading-normal tracking-normal text-indigo-400 m-6 bg-cover bg-fixed bg-purple-400">
+<div class="h-full">
+  <!--Nav-->
+  <div class="w-full container mx-auto">
+    <div class="w-full flex items-center justify-between">
+      <a class="flex items-center no-underline hover:no-underline" href="#">
+        <img src="https://images.minbedstebog.dk/assets/images/logo/MyBestBook_crown_navy_664.en.png" alt="" width="200px">
+      </a>
+    </div>
+  </div>
+
+  <!--Main-->
+  <div class="container pt-24 md:pt-36 mx-auto flex flex-wrap flex-col md:flex-row items-center">
+    <!--Left Col-->
+    <div class="flex flex-col w-full xl:w-2/5 justify-center lg:items-start overflow-y-hidden">
+      <h1 class="my-4 text-3xl md:text-3xl text-white opacity-75 font-bold leading-tight text-center md:text-left">
+        PERSONALIZED CHILDREN'S BOOKS
+      </h1>
+      <p class="leading-normal text-base text-white md:text-2xl mb-8 text-center md:text-left">
+        Children's books that take the reading experience to a whole new level
+      </p>
+
+      <form class="bg-gray-900 opacity-75 w-full shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4" id="bookForm">
+        <div class="mb-4">
+          <label class="block text-blue-300 py-2 font-bold mb-2" for="childName">
+            Enter the Child's Name:
+          </label>
+          <input
+                  class="shadow appearance-none border rounded w-full p-3 text-gray-700 leading-tight focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
+                  id="childName"
+                  name="childName"
+                  type="text"
+                  placeholder="Peter"
+                  required
+          />
+        </div>
+        <!-- Add an input element for gender with the id 'gender' -->
+        <input type="hidden" id="gender" name="gender" value="">
+
+        <div class="flex items-center justify-between pt-4">
+          <button
+                  class="w-full mx-2 bg-gradient-to-r from-blue-800 to-pink-500 hover:from-pink-500 hover:to-green-500 text-white font-bold py-2 px-4 rounded focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
+                  type="submit"
+                  value="male"
+                  id="maleBtn"
+          >
+            Boy
+          </button>
+          <button
+                  class="w-full mx-2 bg-gradient-to-l from-blue-800 to-pink-500 hover:from-pink-500 hover:to-green-500 text-white font-bold py-2 px-4 rounded focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
+                  type="submit"
+                  value="female"
+                  id="femaleBtn"
+          >
+            Girl
+          </button>
+        </div>
+      </form>
+      <div class="text-white" id="errorContainer"></div>
+      <div id="successContainer" class="hidden bg-white rounded-lg p-6 shadow-lg">
+        <h2 class="text-2xl text-green-500 font-bold mb-4">Successful Submission</h2>
+        <form>
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="validatedChildName">
+              Child's Name:
+            </label>
+            <span id="validatedChildName" class="text-gray-900 font-semibold"></span>
+          </div>
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="validatedGender">
+              Gender:
+            </label>
+            <span id="validatedGender" class="text-gray-900 font-semibold"></span>
+          </div>
+        </form>
+      </div>
+
+    </div>
+
+    <!--Right Col-->
+    <div class="w-full xl:w-3/5 p-12 overflow-hidden">
+      <img
+              class="mx-auto w-full md:w-4/5 transform -rotate-6 transition hover:scale-105 duration-700 ease-in-out hover:rotate-6"
+              src="Untitled.png"
+              alt="Your Image Alt Text"
+      />
+    </div>
+
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('bookForm');
+    const errorContainer = document.getElementById('errorContainer');
+    const jsonDataContainer = document.getElementById('jsonDataContainer'); // Container for JSON data
+    const maleBtn = document.getElementById('maleBtn');
+    const femaleBtn = document.getElementById('femaleBtn');
+    const genderInput = document.getElementById('gender');
+
+    maleBtn.addEventListener('click', function () {
+      genderInput.value = 'male';
+    });
+
+    femaleBtn.addEventListener('click', function () {
+      genderInput.value = 'female';
+    });
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      // Reset error messages
+      errorContainer.innerHTML = '';
+
+      // Get form data as JSON
+      const formData = {
+        childName: document.getElementById('childName').value,
+        gender: genderInput.value,
+      };
+
+      // Send data to the backend
+      fetch('http://localhost:3000/validate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // Set the content type to JSON
+        },
+        body: JSON.stringify(formData), // Convert data to JSON
+      })
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Network response was not ok');
+                }
+                return response.json(); // Parse the response as JSON
+              })
+              .then(data => {
+                console.log('Response data:', data);
+
+                if (data.errors && data.errors.length > 0) {
+                  console.log('Validation errors:', data.errors);
+                  data.errors.forEach(error => {
+                    const errorParagraph = document.createElement('p');
+                    errorParagraph.textContent = error;
+                    errorContainer.appendChild(errorParagraph);
+                  });
+                  } else {
+                    // Hide the form and error container
+                    form.style.display = 'none';
+                    errorContainer.style.display = 'none';
+
+                    // Display the success container with the validated data
+                    const successContainer = document.getElementById('successContainer');
+                    const validatedChildName = document.getElementById('validatedChildName');
+                    const validatedGender = document.getElementById('validatedGender');
+
+                    validatedChildName.textContent = data.validatedData.childName;
+                    validatedGender.textContent = data.validatedData.gender;
+
+                    successContainer.style.display = 'block';
+                  }
+              })
+              .catch(error => {
+                console.error('Fetch error:', error);
+              });
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,10 @@
+# Node.js
+backend-node/node_modules/
+
+# macOS
+.DS_Store
+
+# Editor-specific files
+.vscode/
+.idea/
+
